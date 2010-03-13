@@ -31,6 +31,9 @@ namespace :db do
   end
 
   def create_database(config)
+    puts "-" * 80
+    puts $LOAD_PATH.inspect
+    puts "-" * 80
     begin
       ActiveRecord::Base.establish_connection(config)
       ActiveRecord::Base.connection
