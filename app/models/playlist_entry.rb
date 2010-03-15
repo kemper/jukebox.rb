@@ -34,10 +34,14 @@ class PlaylistEntry < ActiveRecord::Base
     end
   end
 
-  def self.skip(track_id)
-    find(track_id).update_attributes! :skip => true
+  def self.request_skip(ip_address, track_id)
+    playlist_entry = find(track_id)
+    SkipRequest.consider(ip_address, playlist_entry)
+    if SkipRequest.can_skip_track?(playlist_entry)
+      playlist_entry.update_attributes! :skip => true
+    end
   end
-    
+
   def filename
     self.file_location.split('/').last
   end

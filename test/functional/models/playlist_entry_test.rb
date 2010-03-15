@@ -9,10 +9,12 @@ class PlaylistEntryTest < Test::Unit::TestCase
     assert_equal 'first', PlaylistEntry.find_all_ready_to_play.first.file_location
   end
 
-  def test_skip
-    entry = PlaylistEntry.create! :file_location => 'first', :status => PlaylistEntry::PLAYING
-    PlaylistEntry.skip entry.id
-    assert_true entry.reload.skip?
+  def test_skip_request_should_create_a_new_skip_request
+    entry = PlaylistEntry.create! :file_location => 'some_location', :status => PlaylistEntry::PLAYING
+    PlaylistEntry.request_skip("127.0.0.1", entry.id)
+    request = SkipRequest.find(:first)
+    assert_equal 'some_location', request.file_location
+    assert_equal '127.0.0.1', request.requested_by
   end
   
 end

@@ -33,7 +33,7 @@ class PlaylistController < ApplicationController
   end
   
   def skip
-    PlaylistEntry.skip(params[:id])
+    PlaylistEntry.request_skip(request.remote_ip, params[:id])
     
     redirect_to playlist_url
   end
