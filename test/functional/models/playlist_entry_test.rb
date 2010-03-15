@@ -16,5 +16,5 @@ class PlaylistEntryTest < Test::Unit::TestCase
     assert_equal 'some_location', request.file_location
     assert_equal '127.0.0.1', request.requested_by
   end
-  
+
 end

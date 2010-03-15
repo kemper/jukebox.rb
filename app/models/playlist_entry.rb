@@ -45,7 +45,7 @@ class PlaylistEntry < ActiveRecord::Base
   def filename
     self.file_location.split('/').last
   end
-  
+
   begin # ID3 Tag Methods
     def id3
       @id3 ||= ID3::AudioFile.new(file_location)
