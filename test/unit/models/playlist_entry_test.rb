@@ -23,24 +23,6 @@ unit_tests do
     assert_equal :new_track, PlaylistEntry.find_next_track_to_play
   end
 
-  test "create_random! creates a new PlaylistEntry randomly" do
-    mp3_files = [nil, nil, :some_file_location, nil]
-    Dir.expects(:glob).with(File.join(JUKEBOX_MUSIC_ROOT, "**", "*.mp3")).returns(mp3_files)
-    PlaylistEntry.expects(:rand).with(mp3_files.size).returns(2)
-    PlaylistEntry.expects(:create!).with(:file_location => :some_file_location)
-    
-    PlaylistEntry.create_random!
-  end
-
-  test "create_random! creates a new PlaylistEntry randomly from the users directory" do
-    mp3_files = [nil, nil, :some_file_location, nil]
-    Dir.expects(:glob).with(File.join(JUKEBOX_MUSIC_ROOT, "some_user", "**", "*.mp3")).returns(mp3_files)
-    PlaylistEntry.expects(:rand).with(mp3_files.size).returns(2)
-    PlaylistEntry.expects(:create!).with(:file_location => :some_file_location)
-    
-    PlaylistEntry.create_random!(:user => "some_user")
-  end
-
   test "find_all_ready_to_play returns all unplayed tracks in playlist order" do
     PlaylistEntry.expects(:find).with(:all, :conditions => {:status => PlaylistEntry::UNPLAYED}, :order => :id)
     
