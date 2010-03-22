@@ -58,4 +58,19 @@ class PlaylistEntryTest < Test::Unit::TestCase
     assert_equal 0, PlaylistEntry.find(:all).size
   end
   
+  def test_create_random_will_not_create_a_playlist_entry_that_exists
+    all_mp3s = Dir.glob(File.join([JUKEBOX_MUSIC_ROOT, "**", "*.mp3"].compact))
+    all_mp3s.each do |file_location|
+      PlaylistEntry.create! :file_location => file_location, :status => PlaylistEntry::UNPLAYED
+    end
+    PlaylistEntry.create_random!
+    assert_equal all_mp3s.size, PlaylistEntry.find(:all).size
+  end
+
+  def test_create_random_will_not_create_a_playlist_entry_that_exists_when_playing_more_than_the_number_of_songs
+    all_mp3s = Dir.glob(File.join([JUKEBOX_MUSIC_ROOT, "**", "*.mp3"].compact))
+    PlaylistEntry.create_random! :number_to_create => all_mp3s.size + 1
+    assert_equal all_mp3s.size, PlaylistEntry.find(:all).size
+  end
+  
 end

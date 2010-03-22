@@ -26,13 +26,27 @@ class PlaylistEntry < ActiveRecord::Base
     end
 
     def create_random!(params = {})
-      mp3_files = Dir.glob(File.join([JUKEBOX_MUSIC_ROOT, params[:user], "**", "*.mp3"].compact))
-      return if mp3_files.empty?
-
-      srand(Time.now.to_i)
-      (params[:number_to_create] || 1).to_i.times do
-        create! :file_location => mp3_files[rand(mp3_files.size)]
+      (params[:number_to_create].to_i || 1).times do
+        create_one_random! params[:user]
       end
+    end
+    
+    def create_one_random!(user)
+      mp3_files = unused_filenames(user)
+      return if mp3_files.empty?
+      create! :file_location => mp3_files[rand(mp3_files.size)]
+    end
+    
+    def unused_filenames(subdirectory)
+      all_mp3_filenames(subdirectory) - all_playlist_filenames
+    end
+    
+    def all_mp3_filenames(subdirectory)
+      Dir.glob(File.join([JUKEBOX_MUSIC_ROOT, subdirectory, "**", "*.mp3"].compact))
+    end
+    
+    def all_playlist_filenames
+      PlaylistEntry.find(:all).map(&:file_location)
     end
         
     def request_skip(ip_address, track_id)
