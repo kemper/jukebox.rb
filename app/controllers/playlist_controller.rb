@@ -19,7 +19,7 @@ class PlaylistController < ApplicationController
   end
   
   def delete
-    PlaylistEntry.delete(params[:id])
+    PlaylistEntry.delete(params[:id]) if PlaylistEntry.exists?(params[:id])
 
     redirect_to playlist_url
   end
@@ -37,7 +37,7 @@ class PlaylistController < ApplicationController
   end
   
   def skip
-    PlaylistEntry.request_skip(request.remote_ip, params[:id])
+    PlaylistEntry.request_skip(request.remote_ip, params[:id]) if PlaylistEntry.exists?(params[:id])
     
     redirect_to playlist_url
   end

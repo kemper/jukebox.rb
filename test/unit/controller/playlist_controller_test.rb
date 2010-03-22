@@ -35,6 +35,7 @@ unit_tests do
     controller.stubs(:params).returns({:id => 1})
     controller.stubs(:request).returns(stub({:remote_ip => "127.0.0.1"}))
 
+    PlaylistEntry.expects(:exists?).with(1).returns(true)
     PlaylistEntry.expects(:request_skip).with("127.0.0.1", 1)
     controller.expects(:playlist_url).returns(:some_url)
     controller.expects(:redirect_to).with(:some_url)
