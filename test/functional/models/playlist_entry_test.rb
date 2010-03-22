@@ -41,5 +41,21 @@ class PlaylistEntryTest < Test::Unit::TestCase
     end
     assert_false entry.can_skip?
   end
+
+  def test_file_exists_return_true_if_the_file_exists
+    entry = PlaylistEntry.create! :file_location => Test::ExistingFileLocation, :status => PlaylistEntry::UNPLAYED
+    assert_true entry.file_exists?
+  end
+
+  def test_file_exists_return_false_if_the_file_does_not_exist
+    entry = PlaylistEntry.create! :file_location => Test::NonExistingFileLocation, :status => PlaylistEntry::UNPLAYED
+    assert_false entry.file_exists?
+  end
+  
+  def test_destroy_non_existent_entries
+    PlaylistEntry.create! :file_location => Test::NonExistingFileLocation, :status => PlaylistEntry::UNPLAYED
+    PlaylistEntry.destroy_non_existent_entries
+    assert_equal 0, PlaylistEntry.find(:all).size
+  end
   
 end

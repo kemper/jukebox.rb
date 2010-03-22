@@ -21,3 +21,8 @@ class Time
     end
   end
 end
+
+module Test
+  ExistingFileLocation = JUKEBOX_MUSIC_ROOT + "/Antony Raijekov/01 - When Waves Trying to Catch a Marvel.mp3"
+  NonExistingFileLocation = JUKEBOX_MUSIC_ROOT + "/some artist that does not exist/some song.mp3"
+end

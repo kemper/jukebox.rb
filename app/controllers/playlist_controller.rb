@@ -2,6 +2,10 @@ require 'find'
 
 class PlaylistController < ApplicationController
 
+  def index
+    PlaylistEntry.destroy_non_existent_entries
+  end
+
   def add_random
     PlaylistEntry.create_random!(:number_to_create => params[:number_to_create] || 1)
     

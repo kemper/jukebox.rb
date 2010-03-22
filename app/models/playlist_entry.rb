@@ -42,6 +42,12 @@ class PlaylistEntry < ActiveRecord::Base
         playlist_entry.update_attributes! :skip => true
       end
     end
+    
+    def destroy_non_existent_entries
+      find(:all).each do |playlist_entry|
+        playlist_entry.destroy if !playlist_entry.file_exists?
+      end
+    end
   end
 
   def can_skip?
@@ -54,6 +60,10 @@ class PlaylistEntry < ActiveRecord::Base
   
   def filename
     self.file_location.split('/').last
+  end
+
+  def file_exists?
+    File.exists? file_location
   end
 
   begin # ID3 Tag Methods
