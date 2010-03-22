@@ -4,44 +4,54 @@ class PlaylistEntry < ActiveRecord::Base
   UNPLAYED = "unplayed"
   PLAYING = "playing"
 
-  def self.playing_track
-    find_by_status(PlaylistEntry::PLAYING)
+  class << self
+    def playing_track
+      find_by_status(PlaylistEntry::PLAYING)
+    end
+  
+    def find_ready_to_play
+      find(:first, :conditions => {:status => UNPLAYED}, :order => :id)
+    end
+
+    def find_all_ready_to_play
+      find(:all, :conditions => {:status => UNPLAYED}, :order => :id)
+    end
+
+    def find_next_track_to_play
+      track = find_ready_to_play
+      return track unless track.nil?
+      return false unless PlayerStatus.continuous_play?
+      create_random!
+      find_ready_to_play
+    end
+
+    def create_random!(params = {})
+      mp3_files = Dir.glob(File.join([JUKEBOX_MUSIC_ROOT, params[:user], "**", "*.mp3"].compact))
+      return if mp3_files.empty?
+
+      srand(Time.now.to_i)
+      (params[:number_to_create] || 1).to_i.times do
+        create! :file_location => mp3_files[rand(mp3_files.size)]
+      end
+    end
+        
+    def request_skip(ip_address, track_id)
+      playlist_entry = find(track_id)
+      SkipRequest.consider(ip_address, playlist_entry)
+      if playlist_entry.can_skip?
+        playlist_entry.update_attributes! :skip => true
+      end
+    end
+  end
+
+  def can_skip?
+    skip_requests.size >= JukeboxOptions::NumberOfRequestsInOrderToSkip
   end
   
-  def self.find_ready_to_play
-    find(:first, :conditions => {:status => UNPLAYED}, :order => :id)
+  def skip_requests
+    SkipRequest.find_all_by_file_location(file_location)
   end
-
-  def self.find_all_ready_to_play
-    find(:all, :conditions => {:status => UNPLAYED}, :order => :id)
-  end
-
-  def self.find_next_track_to_play
-    track = find_ready_to_play
-    return track unless track.nil?
-    return false unless PlayerStatus.continuous_play?
-    create_random!
-    find_ready_to_play
-  end
-
-  def self.create_random!(params = {})
-    mp3_files = Dir.glob(File.join([JUKEBOX_MUSIC_ROOT, params[:user], "**", "*.mp3"].compact))
-    return if mp3_files.empty?
-
-    srand(Time.now.to_i)
-    (params[:number_to_create] || 1).to_i.times do
-      create! :file_location => mp3_files[rand(mp3_files.size)]
-    end
-  end
-
-  def self.request_skip(ip_address, track_id)
-    playlist_entry = find(track_id)
-    SkipRequest.consider(ip_address, playlist_entry)
-    if SkipRequest.can_skip_track?(playlist_entry)
-      playlist_entry.update_attributes! :skip => true
-    end
-  end
-
+  
   def filename
     self.file_location.split('/').last
   end

@@ -17,4 +17,29 @@ class PlaylistEntryTest < Test::Unit::TestCase
     assert_equal '127.0.0.1', request.requested_by
   end
 
+  def test_skip_requests_returns_all_the_skip_requests
+    entry = PlaylistEntry.create! :file_location => 'some_location', :status => PlaylistEntry::UNPLAYED
+    skip_request1 = SkipRequest.create! :requested_by => "127.0.0.1", :file_location => 'some_location'
+    skip_request2 = SkipRequest.create! :requested_by => "127.0.0.2", :file_location => 'some_location'
+    assert_equal 2, entry.skip_requests.size
+    assert_true entry.skip_requests.include?(skip_request1)
+    assert_true entry.skip_requests.include?(skip_request2)
+  end
+
+  def test_can_skip_returns_true_if_there_are_as_many_skip_requests_as_the_jukebox_options
+    entry = PlaylistEntry.create! :file_location => 'some_location', :status => PlaylistEntry::UNPLAYED
+    JukeboxOptions::NumberOfRequestsInOrderToSkip.times do |count|
+      SkipRequest.create! :requested_by => "127.0.0.#{count}", :file_location => 'some_location'
+    end
+    assert_true entry.can_skip?
+  end
+
+  def test_can_skip_returns_false_if_there_are_not_many_skip_requests_as_the_jukebox_options
+    entry = PlaylistEntry.create! :file_location => 'some_location', :status => PlaylistEntry::UNPLAYED
+    (JukeboxOptions::NumberOfRequestsInOrderToSkip - 1).times do |count|
+      SkipRequest.create! :requested_by => "127.0.0.#{count}", :file_location => 'some_location'
+    end
+    assert_false entry.can_skip?
+  end
+  
 end

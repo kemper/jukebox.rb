@@ -22,3 +22,5 @@ config.action_controller.allow_forgery_protection    = false
 config.action_mailer.delivery_method = :test
 
 $LOAD_PATH << "#{RAILS_ROOT}/vendor/mocha-0.5.6/lib"
+
+ENV['JUKEBOX_MUSIC'] = "#{RAILS_ROOT}/test/music"
