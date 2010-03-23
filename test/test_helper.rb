@@ -1,8 +1,7 @@
 ENV["RAILS_ENV"] = "test"
-$LOAD_PATH << File.dirname(__FILE__) + "/../vendor/dust-0.1.6/lib"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require 'test_help'
-require 'dust'
+require "shoulda"
 
 class Test::Unit::TestCase
   # Transactional fixtures accelerate your tests by wrapping each test method
