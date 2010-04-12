@@ -56,6 +56,21 @@ class PlaylistEntry < ActiveRecord::Base
         playlist_entry.update_attributes! :skip => true
       end
     end
+
+    def like(ip_address, track_id)
+      playlist_entry = find(track_id)
+      Feedback.create! :from => ip_address, :file_location => playlist_entry.file_location, :verb => Feedback::Like
+    end
+    
+    def dislike(ip_address, track_id)
+      playlist_entry = find(track_id)
+      Feedback.create! :from => ip_address, :file_location => playlist_entry.file_location, :verb => Feedback::Dislike
+    end
+    
+    def hate(ip_address, track_id)
+      playlist_entry = find(track_id)
+      Feedback.create! :from => ip_address, :file_location => playlist_entry.file_location, :verb => Feedback::Hate
+    end
     
     def destroy_non_existent_entries
       find(:all).each do |playlist_entry|

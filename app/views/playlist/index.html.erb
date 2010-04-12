@@ -27,11 +27,17 @@
 		<a href="<%= playlist_play_url %>">Play</a>
 	<% end %>
 	<% if now_playing %>
-	|
-	<a href="<%= playlist_skip_url({:id => now_playing.id}) %>">Vote to Skip Current Track</a>
+		|
+		<a href="<%= playlist_skip_url({:id => now_playing.id}) %>">Vote to Skip Current Track</a>
+		|
+		<a href="<%= playlist_add_random_url %>">Add a random track</a>
+		|
+		<a href="<%= playlist_like_url({:id => now_playing.id}) %>">Like</a>
+		|
+		<a href="<%= playlist_dislike_url({:id => now_playing.id}) %>">Dislike</a>
+		|
+		<a href="<%= playlist_hate_url({:id => now_playing.id}) %>">Hate</a>
 	<% end %>
-	|
-	<a href="<%= playlist_add_random_url %>">Add a random track</a>
 	|
 	<a href="<%= playlist_add_random_url+"/5" %>">Add 5 random tracks</a>
 	<%= check_box_tag "continuous_play", "1", continuous_play? %> Contintuous Play

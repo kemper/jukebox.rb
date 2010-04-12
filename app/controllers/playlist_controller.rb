@@ -8,37 +8,46 @@ class PlaylistController < ApplicationController
 
   def add_random
     PlaylistEntry.create_random!(:number_to_create => params[:number_to_create] || 1)
-    
     redirect_to playlist_url
   end
   
   def add_for
     PlaylistEntry.create_random!(:user => params[:name])
-    
     redirect_to playlist_url
   end
   
   def delete
     PlaylistEntry.delete(params[:id]) if PlaylistEntry.exists?(params[:id])
-
     redirect_to playlist_url
   end
 
   def pause
     PlayerStatus.pause
-
     redirect_to playlist_url
   end
 
   def play
     PlayerStatus.play
-
     redirect_to playlist_url
   end
   
   def skip
     PlaylistEntry.request_skip(request.remote_ip, params[:id]) if PlaylistEntry.exists?(params[:id])
-    
+    redirect_to playlist_url
+  end
+
+  def like
+    PlaylistEntry.like(request.remote_ip, params[:id]) if PlaylistEntry.exists?(params[:id])
+    redirect_to playlist_url
+  end
+
+  def dislike
+    PlaylistEntry.dislike(request.remote_ip, params[:id]) if PlaylistEntry.exists?(params[:id])
+    redirect_to playlist_url
+  end
+
+  def hate
+    PlaylistEntry.hate(request.remote_ip, params[:id]) if PlaylistEntry.exists?(params[:id])
     redirect_to playlist_url
   end
   

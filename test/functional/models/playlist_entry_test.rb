@@ -87,4 +87,33 @@ class PlaylistEntryTest < Test::Unit::TestCase
     end
   end
 
+  context "feedback" do
+    should "save a feedback entry with type 'Like' for the given id" do
+      entry = PlaylistEntry.create! :file_location => 'some_location', :status => PlaylistEntry::PLAYING
+      PlaylistEntry.like("127.0.0.1", entry.id)
+      feedback = Feedback.find(:first)
+      assert_equal 'some_location', feedback.file_location
+      assert_equal '127.0.0.1', feedback.from
+      assert_equal Feedback::Like, feedback.verb
+    end
+
+    should "save a feedback entry with type 'Disike' for the given id" do
+      entry = PlaylistEntry.create! :file_location => 'some_location', :status => PlaylistEntry::PLAYING
+      PlaylistEntry.dislike("127.0.0.1", entry.id)
+      feedback = Feedback.find(:first)
+      assert_equal 'some_location', feedback.file_location
+      assert_equal '127.0.0.1', feedback.from
+      assert_equal Feedback::Dislike, feedback.verb
+    end
+
+    should "save a feedback entry with type 'Hate' for the given id" do
+      entry = PlaylistEntry.create! :file_location => 'some_location', :status => PlaylistEntry::PLAYING
+      PlaylistEntry.hate("127.0.0.1", entry.id)
+      feedback = Feedback.find(:first)
+      assert_equal 'some_location', feedback.file_location
+      assert_equal '127.0.0.1', feedback.from
+      assert_equal Feedback::Hate, feedback.verb
+    end
+  end
+
 end

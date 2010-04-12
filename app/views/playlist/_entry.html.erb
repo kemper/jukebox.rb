@@ -1,2 +1,11 @@
 <li><%= entry %> <a href="<%= playlist_delete_url({:id => entry.id}) %>"
-title='<%= entry.file_location %>'>delete from playlist</a></li>
+title='<%= entry.file_location %>'>delete from playlist</a>	
+|
+<a href="<%= playlist_like_url({:id => entry.id}) %>"
+	title='<%= entry.file_location %>'>like</a>
+|
+<a href="<%= playlist_dislike_url({:id => entry.id}) %>"
+	title='<%= entry.file_location %>'>dislike</a>
+|
+<a href="<%= playlist_hate_url({:id => entry.id}) %>"
+	title='<%= entry.file_location %>'>hate</a></li>
