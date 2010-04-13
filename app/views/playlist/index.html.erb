@@ -18,8 +18,6 @@
  			<%= now_playing %>
 		<% end %>
     </h2>
-    <%= "<p>&lt;#{now_playing.file_location}&gt;</p>" unless now_playing.nil? %> 
-    <%= "<p>This track has #{now_playing.skip_requests.size} skip request(s)</p>" if !now_playing.nil? && now_playing.skip_requests.any? %> 
 	<p>
 	<% if playing? %>
 		<a href="<%= playlist_pause_url %>">Pause</a>
@@ -43,6 +41,12 @@
 	<%= check_box_tag "continuous_play", "1", continuous_play? %> Contintuous Play
 	<%= observe_field "continuous_play", :method => :get, :url => playlist_toggle_continuous_play_url %>
 	</p>
+    <hr>
+    <%= "<p>&lt;#{now_playing.file_location}&gt;</p>" unless now_playing.nil? %> 
+    <%= "<p>This track has #{now_playing.skip_requests.size} skip request(s)</p>" if !now_playing.nil? && now_playing.skip_requests.any? %> 
+    <%= "<p>This track has been liked #{now_playing.count_likes} time(s).</p>" if !now_playing.nil? && now_playing.count_likes > 0 %> 
+    <%= "<p>This track has been disliked #{now_playing.count_dislikes} time(s).</p>" if !now_playing.nil? && now_playing.count_dislikes > 0 %> 
+    <%= "<p>This track has been hated #{now_playing.count_hates} time(s).</p>" if !now_playing.nil? && now_playing.count_hates > 0 %> 
     <hr>
     <h3>Up next</h3>
     <ol>

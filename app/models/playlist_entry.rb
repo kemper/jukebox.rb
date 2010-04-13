@@ -87,6 +87,18 @@ class PlaylistEntry < ActiveRecord::Base
     SkipRequest.find_all_by_file_location(file_location)
   end
   
+  def count_likes
+    Feedback.find_all_by_file_location_and_verb(file_location, Feedback::Like).size
+  end
+  
+  def count_dislikes
+    Feedback.find_all_by_file_location_and_verb(file_location, Feedback::Dislike).size
+  end
+  
+  def count_hates
+    Feedback.find_all_by_file_location_and_verb(file_location, Feedback::Hate).size
+  end
+  
   def filename
     self.file_location.split('/').last
   end

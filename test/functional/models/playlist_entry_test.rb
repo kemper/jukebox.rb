@@ -70,6 +70,45 @@ class PlaylistEntryTest < Test::Unit::TestCase
     end
   end
   
+  context "count_likes" do
+    should "count the number of feedback entries that have been liked" do
+      entry = PlaylistEntry.create! :file_location => 'some_location', :status => PlaylistEntry::PLAYING
+      Feedback.create! :from => "127.0.0.1", :file_location => 'some_location', :verb => Feedback::Dislike
+      Feedback.create! :from => "127.0.0.1", :file_location => 'some_location', :verb => Feedback::Hate
+      3.times do
+        Feedback.create! :from => "127.0.0.1", :file_location => 'some_location', :verb => Feedback::Like
+      end
+      
+      assert_equal 3, entry.count_likes
+    end
+  end
+  
+  context "count_dislikes" do
+    should "count the number of feedback entries that have been disliked" do
+      entry = PlaylistEntry.create! :file_location => 'some_location', :status => PlaylistEntry::PLAYING
+      Feedback.create! :from => "127.0.0.1", :file_location => 'some_location', :verb => Feedback::Hate
+      Feedback.create! :from => "127.0.0.1", :file_location => 'some_location', :verb => Feedback::Like
+      5.times do
+        Feedback.create! :from => "127.0.0.1", :file_location => 'some_location', :verb => Feedback::Dislike
+      end
+      
+      assert_equal 5, entry.count_dislikes
+    end
+  end
+  
+  context "count_hates" do
+    should "count the number of feedback entries that have been hated" do
+      entry = PlaylistEntry.create! :file_location => 'some_location', :status => PlaylistEntry::PLAYING
+      Feedback.create! :from => "127.0.0.1", :file_location => 'some_location', :verb => Feedback::Dislike
+      Feedback.create! :from => "127.0.0.1", :file_location => 'some_location', :verb => Feedback::Like
+      7.times do
+        Feedback.create! :from => "127.0.0.1", :file_location => 'some_location', :verb => Feedback::Hate
+      end
+      
+      assert_equal 7, entry.count_hates
+    end
+  end
+  
   context "create_random" do
     should "not create a playlist entry that exists" do
       all_mp3s = Dir.glob(File.join([JUKEBOX_MUSIC_ROOT, "**", "*.mp3"].compact))

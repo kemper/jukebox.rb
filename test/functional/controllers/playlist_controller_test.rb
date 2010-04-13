@@ -26,13 +26,43 @@ class PlaylistControllerTest < ActionController::TestCase
         assert_select "a[href=?]", playlist_hate_url(:id => entry1.id)
       end
 
-      should "render the skip count" do
+      should "render the total number of skip requests for that track" do
         PlaylistEntry.create! :file_location => Test::ExistingFileLocation, :status => PlaylistEntry::PLAYING
         SkipRequest.create! :requested_by => "127.0.0.1", :file_location => Test::ExistingFileLocation
     
         get :index
-        assert_response :success
         assert_select "p", :text => "This track has 1 skip request(s)"
+      end
+
+      should "render the total of 'like' feedback for that track" do
+        PlaylistEntry.create! :file_location => Test::ExistingFileLocation, :status => PlaylistEntry::PLAYING
+        Feedback.create! :from => "127.0.0.1", :file_location => Test::FirstTestTrack, :verb => Feedback::Like
+        
+        get :index
+        assert_select "p", :text => "This track has been liked 1 time(s)."
+      end
+
+      should "render the total of 'dislike' feedback for that track" do
+        PlaylistEntry.create! :file_location => Test::ExistingFileLocation, :status => PlaylistEntry::PLAYING
+        Feedback.create! :from => "127.0.0.1", :file_location => Test::FirstTestTrack, :verb => Feedback::Dislike
+        
+        get :index
+        assert_select "p", :text => "This track has been disliked 1 time(s)."
+      end
+
+      should "render the total of 'like' feedback for that track" do
+        PlaylistEntry.create! :file_location => Test::ExistingFileLocation, :status => PlaylistEntry::PLAYING
+        Feedback.create! :from => "127.0.0.1", :file_location => Test::FirstTestTrack, :verb => Feedback::Hate
+        
+        get :index
+        assert_select "p", :text => "This track has been hated 1 time(s)."
+      end
+
+      should "not render any feedback when there is none" do
+        PlaylistEntry.create! :file_location => Test::ExistingFileLocation, :status => PlaylistEntry::PLAYING
+        
+        get :index
+        assert_select "p", :text => /This track has been/, :count => 0
       end
 
       should "remove playlist entries when that someone deletes when finding now playing" do
